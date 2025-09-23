@@ -1,0 +1,13 @@
+# This is a compose file used for development in your local PC.
+# It extends the base compose file: docker compose -f docker-compose.base.yml -f docker-compose.dev.yml up
+
+services:
+  solarpred:
+    container_name: solarpred_local
+    
+    volumes:
+      # Mount your local project directory during development
+      # This lets you modify code locally and see changes instantly in the container
+      # Makes debugging much easier since you don't need to rebuild the image
+      # after each code change
+      - ./solar_pred:/app/solar_pred

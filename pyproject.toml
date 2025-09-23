@@ -1,0 +1,15 @@
+[project]
+name = "portfolio-solar"
+version = "1.0.0"
+description = "Example ML pipeline to predict solar panel output"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.117.1",
+    "pandas>=2.3.2",
+    "pydantic>=2.11.9",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.5",
+    "scikit-learn>=1.7.2",
+    "uvicorn>=0.36.0",
+]

@@ -1,0 +1,8 @@
+# This is a compose file used for deployment on the server
+# You can separately configure secrets, volumes and networks depending on server deployment needs.
+# It extends the base compose file: docker compose -f docker-compose.base.yml -f docker-compose.prod.yml up
+
+services:
+  solarpred:
+    container_name: solarpred
+  

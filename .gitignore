@@ -1,0 +1,18 @@
+# ignore pushing the virtual environment
+**/venv/
+**/env/
+**/.venv/
+
+# ignore pushing the folders with data
+**/datasets/
+**/production_datasets/
+**/mlruns/
+
+
+# Python
+**/__pycache__/
+
+
+# ignore pushing the env variables
+**/.env
+.env

@@ -1,0 +1,54 @@
+# Example configuration for a deployment method.
+# It removes the current deployed container, 
+# and deploys a new container. 
+
+name: deployment
+
+on:
+    # trigger the deployment
+    # when there is a push to the 'placeholder' branch. 
+    # normally, we write 'main' here
+    push:
+        branches: [ placeholder ]
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        # this deployment happens on self-hosted runner
+        runs-on: self-hosted
+        
+        steps:
+            # in this section, we specify the deployment steps 
+            # each step can be either a bash script or a github provided tool. 
+            
+            # example: github provided checkout tool
+            - name: Clone git repo to server
+              uses: actions/checkout@v4
+            
+            # example: bash script to create an environment variable 
+            # the deployment container can access this variable via compose file
+            
+            # you can also add secrets to the env file for docker compose to access
+            - name: Create .env file # start with '-' to indicate a new step
+              run: |
+                echo "COMMID_ID=${GITHUB_SHA}" >> .env
+                echo "API_KEY=${{ secrets.API_KEY }}" >> .env
+
+            - name: Stop and remove old containers
+              run: | # add for multi-line commands. 
+                # adding '|| true' after a command allows the workflow to continue if this command fails 
+                docker stop $(docker ps -q --filter name=container_name) || true
+                docker rm $(docker ps -q --filter name=container_name) || true
+                
+            - name: Build a new container
+              run: docker compose -f docker-compose.base.yml -f docker-compose.prod.yml up -- build
+              timeout-minutes: 20
+            
+            # use one of these healthcheck methods depending on your implementation.
+            - name: Wait for healthcheck
+              run: | # perform a healthcheck every 5 seconds for 2 minutes to make sure 
+                timeout 120 bash -c 'while curl -fs http://localhost:PORT/healthcheck | grep -q "200"; do sleep 5; done'
+            
+            # this step assumes you have set up healthcheck in the compose file
+            - name: Use docker's native healthcheck 
+              run:  docker compose -f docker-compose.base.yml -f docker-compose.prod.yml wait service_name 

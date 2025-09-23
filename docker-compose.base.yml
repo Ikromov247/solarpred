@@ -1,0 +1,72 @@
+# This is a base compose file that contains configuration 
+# that will not change across different deployment types and environments
+# There will be additional compose files that extend it and add custom configuration
+
+
+# Docker Compose assigns project names automatically based on the parent directory.
+# This project name becomes a prefix for all project components (images, volumes, networks).
+# Example: In a project directory called "deployment_docs", a volume named "test_volume" becomes "deployment_docs-test_volume"
+# Consider setting an explicit project name to better track your project's components.
+name: deployment_docs
+
+services:
+  # the container names are appended with word _test
+  # so they do not conflict with the deployed containers during deployment.
+  # if the test container passes tests, its suffix will be removed 
+  solarpred:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: solarpred
+    environment:
+      # you can add env vars and secrets here.
+      # HOWEVER you should know that managing secrets this way is not secure
+      # since they will be stored in _plain text_ in container configuration file. 
+      - COMMIT_ID=${COMMID_ID}
+      - ENDPOINT_PORT=8010
+    
+    volumes:
+      # if you save a file inside /app/data in the container,
+      # it will also be in test_volume container.
+      # when the same volume is mounted on several containers,
+      # its contents can be accessed by all of those containers. 
+      - solar_data:/app/data
+
+    expose:
+      - 8010
+    ports:
+      # Port Mapping format: outside_port:internal_port
+      - "9010:8010"
+      # This maps port 9010 on your host machine to port 8010 in the container. This matters for two key reasons:
+      # 1. Containers in the same network communicate using 
+      ## the internal port (8010), while external requests must use the host port (9010)
+      # 2. If port 9010 is already taken on your host machine, you can simply change it here
+      ##  without modifying your application code, which likely references the internal port (8010)
+    
+    networks:
+      - external_network
+      - local_network
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:PORT/healthcheck"]
+      interval: 10s
+      timeout: 3m
+      retries: 18
+      start_period: 30s
+
+volumes:
+  solar_data:
+
+
+networks:
+  # External network allows containers across different projects on the host machine to communicate
+  # Containers can reach each other using container names as hostnames
+  # Example: From container 'test_tollbal_test': curl http://another_container:internal_port/healthcheck
+  external_network_test:  # The name must be unique across the entire host machine
+    external: true
+  
+  # Local network enables communication only between containers
+  # within this specific compose project
+  # Example: From container 'test_tollbal_test': curl http://extra:internal_port/healthcheck
+  local_network_test:
+    driver: bridge
