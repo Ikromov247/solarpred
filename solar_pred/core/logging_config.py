@@ -25,8 +25,9 @@ def setup_logger(
         log_file_path: str = "app.log",       
         max_file_size: int = 10 * 1024 * 1024,
         backup_count: int = 10,
-        log_level: int = logging.DEBUG,
-        console_log_level: int = logging.INFO
+        log_level: str = "INFO",
+        console_log_level: str = None,
+        file_log_level: str = None
     ) -> None:
     
     # Get absolute path
@@ -45,7 +46,7 @@ def setup_logger(
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     console_handler.setFormatter(console_formatter)
-    console_handler.setLevel(console_log_level)
+    console_handler.setLevel(console_log_level or log_level)
     root_logger.addHandler(console_handler)
 
     # File Handler
@@ -57,7 +58,7 @@ def setup_logger(
     )
     json_formatter = JSONFormatter()
     file_handler.setFormatter(json_formatter)
-    file_handler.setLevel(log_level)
+    file_handler.setLevel(file_log_level or log_level)
     root_logger.addHandler(file_handler)
     
     # Test logging

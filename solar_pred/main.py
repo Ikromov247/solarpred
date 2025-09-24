@@ -1,13 +1,9 @@
-import os
-
 import uvicorn
 from fastapi import FastAPI
 
 from solar_pred.endpoints.router import api_router
 from solar_pred.core.event_handlers import start_app_handler, stop_app_handler
-
-PORT = int(os.environ.get("ENDPOINT_PORT", "8010"))
-IS_DEV = int(os.environ.get("IS_DEV", 0)) # 0 or 1
+from solar_pred.core.config import config
 
 def get_api_app() -> FastAPI:
     api_app = FastAPI(title="ML API", version="1.0.0", debug=False)
@@ -24,4 +20,4 @@ app = get_api_app()
 if __name__=="__main__":
     """Initialize the endpoint"""
     print("Started the pipeline server")
-    uvicorn.run("solar_pred.main:app", host="0.0.0.0", port=PORT, reload=bool(IS_DEV))
+    uvicorn.run("solar_pred.main:app", host="0.0.0.0", port=config.port, reload=config.is_dev)
