@@ -6,7 +6,7 @@ router = APIRouter()
 
 
 @router.get("/healthcheck", response_model=HealthCheckOutput, name="healthcheck")
-def get_heathcheck() -> HealthCheckOutput:
+async def get_heathcheck() -> HealthCheckOutput:
     # check API health
     """
     is_healthy = True

@@ -10,7 +10,7 @@ import pickle
 import pandas as pd
 
 from solar_pred.core.ai_models._models_general import train_val_split, normalize_train_val, output_boundaries
-from solar_pred.core.exceptions import TrainSizeError, TestSizeErorr
+from solar_pred.core.exceptions import TrainSizeError, TestSizeError
 from solar_pred.core.logging_config import get_logger
 
 # Add safe globals for newer PyTorch versions
@@ -158,7 +158,7 @@ class NeuralNetwork(nn.Module):
 
         # Check if the test set is too small
         if len(test) < 1:
-            raise TestSizeErorr("The test set is too small. It must contain at least 1 row.")
+            raise TestSizeError("The test set is too small. It must contain at least 1 row.")
 
         # We only use the features_to_use to train the model.
         test = test[self.features_to_use]
