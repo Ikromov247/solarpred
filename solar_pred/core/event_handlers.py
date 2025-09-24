@@ -27,8 +27,9 @@ def _initialize_logger():
     
     setup_logger(
         log_file_path=log_file_path, 
+        log_level=config.log_level,
         console_log_level=config.console_log_level,
-        log_level=config.file_log_level
+        file_log_level=config.file_log_level
     ) # switch to logging.DEBUG when debugging
 
 
