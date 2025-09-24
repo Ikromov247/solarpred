@@ -21,7 +21,7 @@ class TrainingInput(BaseModel):
     panel_output: List[PanelOutput]
 
 class PredictionOutput(BaseModel):
-    prediction: List[Dict[str, float]]
+    prediction: Dict[str, float]
 
 class HealthCheckOutput(BaseModel):
     status: str

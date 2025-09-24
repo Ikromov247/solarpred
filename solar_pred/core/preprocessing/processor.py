@@ -49,6 +49,8 @@ class DataProcessor:
             sunset_sunrise=sunset_sunrise_raw_df, 
             inverter=panel_output_resampled
         )
+        
+        merged_dataset.dropna(axis=0, inplace=True)
         return merged_dataset
 
 

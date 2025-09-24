@@ -14,7 +14,7 @@ MODELS_CONFIG = {
                                 'uv_index',
                                 'diffuse_radiation',
                                 'direct_radiation_instant'
-                                ], # if you want to use all features, set this to ['all']
+                                ],
             "scaler": StandardScaler(),
             "normalize": True,
             "deterministic": True,
