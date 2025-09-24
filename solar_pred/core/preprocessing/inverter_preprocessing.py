@@ -21,7 +21,7 @@ def preprocess_inverter(inverter_data_df: pd.DataFrame) -> pd.DataFrame:
     # Convert 'solar_power' to float
     inverter_data_df['solar_power'] = inverter_data_df['solar_power'].astype(float)
 
-    inverter_data_resampled = inverter_data_df.resample('H').mean()
+    inverter_data_resampled = inverter_data_df.resample('1h').mean()
 
     # Remove duplicate indices
     inverter_data_resampled = inverter_data_resampled.groupby(level=0).first()

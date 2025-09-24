@@ -9,11 +9,14 @@ import copy
 import pickle
 import pandas as pd
 
-from core.ai_models._models_general import train_val_split, normalize_train_val, output_boundaries
-from core.exceptions import TrainSizeError, TestSizeErorr
-from core.logging_config import get_logger
+from solar_pred.core.ai_models._models_general import train_val_split, normalize_train_val, output_boundaries
+from solar_pred.core.exceptions import TrainSizeError, TestSizeErorr
+from solar_pred.core.logging_config import get_logger
 
-torch.serialization.add_safe_globals([StandardScaler])
+# Add safe globals for newer PyTorch versions
+if hasattr(torch.serialization, 'add_safe_globals'):
+    print('safe globals added')
+    torch.serialization.add_safe_globals([StandardScaler])
 
 
 # Custom loss function that represents our target metric.
@@ -167,6 +170,7 @@ class NeuralNetwork(nn.Module):
         with torch.no_grad():
             X_tensor = torch.FloatTensor(X).to(self.device)
             predictions = self(X_tensor).cpu().numpy()
+            print(predictions)
 
         predictions = self.postprocess_predictions(predictions.squeeze())
         return predictions
@@ -196,16 +200,19 @@ class NeuralNetwork(nn.Module):
             'features_to_use': self.features_to_use,
             'num_features': self.num_features,
             'learning_rate': self.learning_rate,
-            'is_trained': self.is_trained
+            'is_trained': 'ligma'
         }
         
         # Save using pickle
         with open(os.path.join(file_directory, 'neural_network_model.pkl'), 'wb') as f:
             pickle.dump(model_state, f)
 
+
     def load_model(self, file_directory='saved_weights'):
         file_path = os.path.join(file_directory, 'neural_network_model.pkl')
+        print(file_path)
         if not os.path.exists(file_path):
+            print('error when loading')
             raise FileNotFoundError(f"No file found at {file_path}")
 
         # Load the entire model state using pickle

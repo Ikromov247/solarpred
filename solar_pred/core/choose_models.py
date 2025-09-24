@@ -1,8 +1,8 @@
 import os
 
 
-from core.ai_models.neural_network import load_nr_model
-from core.logging_config import get_logger
+from solar_pred.core.ai_models.neural_network import load_nr_model
+from solar_pred.core.logging_config import get_logger
 
 MODELS_AVAILABLE = ["neural_network"]
 

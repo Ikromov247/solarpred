@@ -2,9 +2,9 @@ import pandas as pd
 import pytz
 from datetime import date, timedelta
 
-from core.logging_config import get_logger
-from core.preprocessing import preprocess_datasets
-from core.get_data import get_suntimes_by_date, get_suntimes_from_inverter, get_weather_data_by_date, get_weather_data_for_df
+from solar_pred.core.logging_config import get_logger
+from solar_pred.core.preprocessing import preprocess_datasets
+from solar_pred.core.get_data import get_suntimes_by_date, get_suntimes_from_inverter, get_weather_data_by_date, get_weather_data_for_df
 
 
 
@@ -21,11 +21,10 @@ class DataProcessor:
         scale
         return 
         """
-        panel_metadata = training_input.panel_data.model_dump()
+        panel_metadata = training_input.panel_metadata.model_dump()
         panel_output = pd.DataFrame([data.model_dump() for data in training_input.panel_output])
-        
         # go through the preprocessing pipeline
-        panel_output.loc[:, 'timestamp'] = pd.to_datetime(panel_output['timestamp'], format=DataProcessor.DATE_STRFORMAT).values
+        panel_output.loc[:, 'timestamp'] = pd.to_datetime(panel_output['timestamp'], format=DataProcessor.DATE_STRFORMAT)
         panel_output.set_index("timestamp", inplace=True)
         panel_output_resampled = panel_output.resample("1h").mean()
         panel_output_resampled.dropna(axis=0, inplace=True)

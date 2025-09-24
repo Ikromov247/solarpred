@@ -11,3 +11,4 @@ requests-cache>=1.2.1
 retry-requests>=2.0.0
 scikit-learn>=1.7.2
 uvicorn>=0.36.0
+numpy>=2.0.0
