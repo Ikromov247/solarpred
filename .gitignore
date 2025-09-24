@@ -15,3 +15,7 @@
 
 *.sqlite
 sandbox*
+
+# codebase review files
+feedback.md
+review_prompt.md

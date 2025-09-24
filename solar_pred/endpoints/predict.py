@@ -9,7 +9,7 @@ from solar_pred.core.preprocessing.processor import DataProcessor
 router = APIRouter()
 
 @router.post("/predict", response_model=PredictionOutput, name="predict")
-def predict(
+async def predict(
         request: Request, 
         input_data: PanelMetadata
     )->PredictionOutput:
