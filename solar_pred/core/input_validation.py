@@ -1,11 +1,11 @@
-from pydantic import BaseModel
-from typing import Union, Dict, List, Optional
+from pydantic import BaseModel, Field
+from typing import Union, Dict, List, Optional, Any
 import datetime
 
 
 class PanelMetadata(BaseModel):
-    inverter_id:str
-    plant_id:str
+    inverter_id: str
+    plant_id: str
     # solar panel coordinates. Used to fetch accurate weather
     latitude: float 
     longitude: float
@@ -14,7 +14,7 @@ class PanelMetadata(BaseModel):
 
 class PanelOutput(BaseModel):
     timestamp: Union[str, int] # yyyymmddhhmmss format, or %Y%m%d%H%M%S in strtime format
-    solar_power:float
+    solar_power: float
 
 class TrainingInput(BaseModel):
     panel_metadata: PanelMetadata
@@ -26,4 +26,5 @@ class PredictionOutput(BaseModel):
 class HealthCheckOutput(BaseModel):
     status: str
     is_healthy: bool
-    timestamp: datetime.datetime = datetime.datetime.now()
+    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    details: Optional[Dict[str, Any]] = Field(default=None, description="Detailed health check results")

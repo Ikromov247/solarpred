@@ -7,10 +7,11 @@ from typing import Callable
 import os
 
 from fastapi import FastAPI
+from datetime import datetime
 
 from solar_pred.core.config import config
 from solar_pred.core.choose_models import initialize_model
-from solar_pred.core.logging_config import setup_logger
+from solar_pred.core.logging_config import setup_logger, get_logger
 
 def _startup_model(app: FastAPI) -> None:
     # load model during startup.
@@ -34,8 +35,16 @@ def _initialize_logger():
 
 
 def _shutdown_model(app: FastAPI) -> None:
-    app.state.model.save_model(app.state.weights_dir)
-    app.state.model = None
+    logger = get_logger(__name__)
+    try:
+        if hasattr(app.state, 'model') and app.state.model is not None:
+            backup_path = f"{app.state.weights_dir}_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            app.state.model.save_model(backup_path)
+            app.state.model.save_model(app.state.weights_dir)
+            logger.info("Model saved successfully during shutdown")
+        app.state.model = None
+    except Exception as e:
+        logger.error(f"Failed to save model during shutdown: {str(e)}")
 
 
 def start_app_handler(app: FastAPI) -> Callable:
