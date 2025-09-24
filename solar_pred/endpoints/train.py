@@ -3,7 +3,8 @@ import traceback
 from fastapi import APIRouter, HTTPException, status
 from starlette.requests import Request
 
-from input_validation.models import TrainingInput
+from solar_pred.core.input_validation import TrainingInput
+from solar_pred.core.preprocessing.processor import DataProcessor
 
 router = APIRouter()
 
@@ -14,9 +15,11 @@ def train(
     try:
         # load the model from app state
         model = request.app.state.model
-        
+        data_processor = DataProcessor()
+
+        train_data = data_processor.preprocess_training_input(input_data)
         # train the model
-        model.train(input_data)
+        model.train(train_data)
         
         return {
                 "status": "OK", 

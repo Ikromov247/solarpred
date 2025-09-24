@@ -3,23 +3,25 @@ import traceback
 from fastapi import APIRouter, HTTPException, status
 from starlette.requests import Request
 
-
-from input_validation.models import PredictionInput, PredictionOutput
+from solar_pred.core.input_validation import PanelData, PredictionOutput
+from solar_pred.core.preprocessing.processor import DataProcessor
 
 router = APIRouter()
 
 @router.post("/predict", response_model=PredictionOutput, name="predict")
 def predict(
         request: Request, 
-        input_data: list[PredictionInput]
+        input_data: PanelData
     )->PredictionOutput:
     
     try:
         # load the model from app state
         model = request.app.state.model
-        
+        processor = DataProcessor()
+
+        inference_data = processor.preprocess_inference_input(input_data)
         # run prediction
-        output = model.predict(input_data)
+        output = model.predict(inference_data)
         
         return output
     

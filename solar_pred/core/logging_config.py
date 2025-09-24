@@ -63,5 +63,5 @@ def setup_logger(
     # Test logging
     root_logger.info("Logging system initialized")
 
-def get_logger(name: str = None) -> logging.Logger:
+def get_logger(name: str|None = None) -> logging.Logger:
     return logging.getLogger(name or __name__)

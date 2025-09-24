@@ -9,21 +9,16 @@ import logging
 
 from fastapi import FastAPI
 
-from core.config import DEFAULT_MODEL_PATH, VOLUME_PATH
+from core.config import DEFAULT_MODEL_DIR, VOLUME_PATH
 from core.choose_models import initialize_model
 from core.logging_config import setup_logger
 
 def _startup_model(app: FastAPI) -> None:
     # load model during startup.
-    model_path = DEFAULT_MODEL_PATH
-    model_instance = initialize_model(model_path)
+    weights_dir = DEFAULT_MODEL_DIR
+    model_instance = initialize_model(chosen_model="neural_network", weights_dir=weights_dir)
     app.state.model = model_instance
 
-def _startup_database(app: FastAPI) -> None:
-    """start a database connection if needed"""
-    # database_engine = dbconnect()
-    # app.state.engine = database_engine # this lets you access the engine from anywhere in the app. 
-    pass
 
 def _initialize_logger():
     log_file_path = os.path.join(VOLUME_PATH, "logs" , "app.log")

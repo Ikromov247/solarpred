@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 
-from input_validation.models import HealthCheckOutput
+from solar_pred.core.input_validation import HealthCheckOutput
 
 router = APIRouter()
 
