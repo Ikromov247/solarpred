@@ -23,8 +23,8 @@ def predict(
         inference_data = processor.preprocess_inference_input(input_data)
         # run prediction
         output = model.predict(inference_data)
-        print(output)
-        return output
+        
+        return PredictionOutput(prediction=output)
     
     except Exception as e:
         # return error response with details about the error.

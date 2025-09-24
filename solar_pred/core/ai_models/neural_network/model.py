@@ -15,13 +15,12 @@ from solar_pred.core.logging_config import get_logger
 
 # Add safe globals for newer PyTorch versions
 if hasattr(torch.serialization, 'add_safe_globals'):
-    print('safe globals added')
     torch.serialization.add_safe_globals([StandardScaler])
 
 
 # Custom loss function that represents our target metric.
 class PercentageErrorLoss(nn.Module):
-    def __init__(self, scale_factor=187.2):
+    def __init__(self, scale_factor=40.0):
         super().__init__()
         self.scale_factor = scale_factor
 
@@ -117,7 +116,6 @@ class NeuralNetwork(nn.Module):
 
         # Prepare the data
         train_sets, val_sets = self.prepare_train_data(train_set)
-
         # Train the model
         X_train, y_train = train_sets
         
@@ -136,11 +134,23 @@ class NeuralNetwork(nn.Module):
                 loss = criterion(predictions, targets)
                 
                 self.optimizer.zero_grad()
-                loss.backward() 
+                loss.backward()
                 self.optimizer.step()
                 
                 total_loss += loss.item()
+            self.eval()
         
+        # Test on validation set
+        X_val, y_val = val_sets
+        with torch.no_grad():
+            val_states = torch.FloatTensor(X_val).to(self.device)
+            val_targets = torch.FloatTensor(y_val).to(self.device).unsqueeze(1)
+            val_predictions = self(val_states)
+            val_loss = criterion(val_predictions, val_targets)
+            
+            # Store validation metrics for monitoring
+            self.val_loss = val_loss.item()
+
         self.is_trained = True
         return self
     
@@ -170,20 +180,59 @@ class NeuralNetwork(nn.Module):
         with torch.no_grad():
             X_tensor = torch.FloatTensor(X).to(self.device)
             predictions = self(X_tensor).cpu().numpy()
-            print(predictions)
 
-        predictions = self.postprocess_predictions(predictions.squeeze())
-        return predictions
+        processed_predictions = self.postprocess_predictions(predictions.squeeze())
+        timestamps = test_set.index.strftime("%Y%m%d%H%M%S")
+        output = {timestamp:prediction for timestamp, prediction in zip(timestamps, processed_predictions)}
+
+        return output
     
-    def postprocess_predictions(self, predictions):
+    def postprocess_predictions(self, predictions:np.ndarray):
 
         if self.model_CONFIG['normalize']:
             predictions = self.scaler_y.inverse_transform(predictions.reshape(-1, 1))
+        # predictions = output_boundaries(predictions, self.model_CONFIG)
+        predictions = predictions.reshape(-1).astype(np.float64)
+        rounded_predictions = np.round(predictions, decimals=2)
 
-        predictions = output_boundaries(predictions, self.model_CONFIG)
-        predictions = predictions.reshape(-1)
+        return rounded_predictions.tolist()
 
-        return predictions
+    @classmethod
+    def load_from_file(cls, file_directory='saved_weights'):
+        file_path = os.path.join(file_directory, 'neural_network_model.pkl')
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"No file found at {file_path}")
+
+        # Load the entire model state using pickle
+        with open(file_path, 'rb') as f:
+            model_state = pickle.load(f)
+        
+        # Create a new instance with the loaded config
+        instance = cls(model_state['model_CONFIG'])
+        
+        # Update model attributes
+        instance.load_state_dict(model_state['model_state_dict'])
+        instance.scaler_X = model_state['scaler_X']
+        instance.scaler_y = model_state['scaler_y']
+        instance.features_to_use = model_state['features_to_use']
+        instance.num_features = model_state['num_features']
+        instance.learning_rate = model_state['learning_rate']
+        
+        # Restore train and validation splits if they exist
+        if model_state['train_split'] is not None:
+            instance.train_split = pd.DataFrame.from_dict(model_state['train_split'])
+        if model_state['val_split'] is not None:
+            instance.val_split = pd.DataFrame.from_dict(model_state['val_split'])
+
+        # Update optimizer
+        instance.optimizer = optim.Adam(instance.parameters(), lr=instance.learning_rate)
+        instance.optimizer.load_state_dict(model_state['optimizer_state_dict'])
+        instance.is_trained = model_state['is_trained']
+        
+        # Move model to appropriate device
+        instance.to(instance.device)
+        
+        return instance
 
     def save_model(self, file_directory='saved_weights'):
         os.makedirs(file_directory, exist_ok=True)
@@ -200,46 +249,9 @@ class NeuralNetwork(nn.Module):
             'features_to_use': self.features_to_use,
             'num_features': self.num_features,
             'learning_rate': self.learning_rate,
-            'is_trained': 'ligma'
+            'is_trained': self.is_trained
         }
         
         # Save using pickle
         with open(os.path.join(file_directory, 'neural_network_model.pkl'), 'wb') as f:
             pickle.dump(model_state, f)
-
-
-    def load_model(self, file_directory='saved_weights'):
-        file_path = os.path.join(file_directory, 'neural_network_model.pkl')
-        print(file_path)
-        if not os.path.exists(file_path):
-            print('error when loading')
-            raise FileNotFoundError(f"No file found at {file_path}")
-
-        # Load the entire model state using pickle
-        with open(file_path, 'rb') as f:
-            model_state = pickle.load(f)
-        
-        # Update model attributes
-        self.load_state_dict(model_state['model_state_dict'])
-        self.model_CONFIG = model_state['model_CONFIG']
-        self.scaler_X = model_state['scaler_X']
-        self.scaler_y = model_state['scaler_y']
-        self.features_to_use = model_state['features_to_use']
-        self.num_features = model_state['num_features']
-        self.learning_rate = model_state['learning_rate']
-        
-        # Restore train and validation splits if they exist
-        if model_state['train_split'] is not None:
-            self.train_split = pd.DataFrame.from_dict(model_state['train_split'])
-        if model_state['val_split'] is not None:
-            self.val_split = pd.DataFrame.from_dict(model_state['val_split'])
-
-        # Update optimizer
-        self.optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
-        self.optimizer.load_state_dict(model_state['optimizer_state_dict'])
-        self.is_trained = model_state['is_trained']
-        
-        # Move model to appropriate device
-        self.to(self.device)
-        
-        return self
