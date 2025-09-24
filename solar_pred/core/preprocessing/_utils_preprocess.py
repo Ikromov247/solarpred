@@ -1,9 +1,17 @@
-from pytz import timezone
 import pandas as pd
-import numpy as np
-from scipy import stats
-from typing import Tuple
 
+
+def merge_datasets(df1, df2, method='inner'):
+    
+    # Perform an inner merge with the weather data using inner join. We use inner joing because we can't train or make predictions without weather data.
+    merged_df = pd.merge(df1, df2, 
+                         left_index=True, right_index=True, 
+                         how=method)
+
+    # Sort the index to ensure chronological order
+    merged_df = merged_df.sort_index()
+
+    return merged_df
 
 def filter_daylight_hours(df, sunset_sunrise):
     df = df.copy()

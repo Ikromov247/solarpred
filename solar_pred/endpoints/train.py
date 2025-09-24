@@ -1,10 +1,8 @@
-import traceback
-
 from fastapi import APIRouter, HTTPException, status
 from starlette.requests import Request
 
-from solar_pred.core.input_validation import TrainingInput
-from solar_pred.core.preprocessing.processor import DataProcessor
+from core.input_validation import TrainingInput
+from core.preprocessing.processor import DataProcessor
 
 router = APIRouter()
 

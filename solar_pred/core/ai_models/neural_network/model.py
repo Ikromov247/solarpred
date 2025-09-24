@@ -10,7 +10,7 @@ import pickle
 import pandas as pd
 
 from core.ai_models._models_general import train_val_split, normalize_train_val, output_boundaries
-from solar_pred.core.exceptions import TrainSizeError, TestSizeErorr
+from core.exceptions import TrainSizeError, TestSizeErorr
 from core.logging_config import get_logger
 
 torch.serialization.add_safe_globals([StandardScaler])

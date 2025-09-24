@@ -1,15 +1,15 @@
 from fastapi import APIRouter, HTTPException, status
 from starlette.requests import Request
 
-from solar_pred.core.input_validation import PanelData, PredictionOutput
-from solar_pred.core.preprocessing.processor import DataProcessor
+from core.input_validation import PanelMetadata, PredictionOutput
+from core.preprocessing.processor import DataProcessor
 
 router = APIRouter()
 
 @router.post("/predict", response_model=PredictionOutput, name="predict")
 def predict(
         request: Request, 
-        input_data: PanelData
+        input_data: PanelMetadata
     )->PredictionOutput:
     
     try:

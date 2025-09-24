@@ -31,7 +31,7 @@ def setup_logger(
     
     # Get absolute path
     log_path = Path(log_file_path).resolve()
-    log_path.parent.mkdir(parents=True, exist_ok=True)
+    # log_path.parent.mkdir(parents=True, exist_ok=True)
     
     # Configure root logger
     root_logger = logging.getLogger("root")

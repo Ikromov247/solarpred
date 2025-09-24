@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from solar_pred.core.input_validation import HealthCheckOutput
+from core.input_validation import HealthCheckOutput
 
 router = APIRouter()
 

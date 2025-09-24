@@ -7,7 +7,7 @@
 # This project name becomes a prefix for all project components (images, volumes, networks).
 # Example: In a project directory called "deployment_docs", a volume named "test_volume" becomes "deployment_docs-test_volume"
 # Consider setting an explicit project name to better track your project's components.
-name: deployment_docs
+name: solar_pred
 
 services:
   # the container names are appended with word _test
@@ -22,7 +22,6 @@ services:
       # you can add env vars and secrets here.
       # HOWEVER you should know that managing secrets this way is not secure
       # since they will be stored in _plain text_ in container configuration file. 
-      - COMMIT_ID=${COMMID_ID}
       - PORT=${PORT}
       - IS_DEV=0
     

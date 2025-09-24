@@ -21,8 +21,10 @@ def _startup_model(app: FastAPI) -> None:
 
 
 def _initialize_logger():
-    log_file_path = os.path.join(VOLUME_PATH, "logs" , "app.log")
-    os.makedirs(log_file_path, exist_ok=True)
+    log_file_dir = os.path.join(VOLUME_PATH, "logs")
+    log_file_path = os.path.join(log_file_dir, "app.log")
+    os.makedirs(log_file_dir, exist_ok=True)
+    
     setup_logger(log_file_path=log_file_path, console_log_level=logging.INFO) # switch to logging.DEBUG when debugging
 
 

@@ -3,7 +3,7 @@ import os
 import uvicorn
 from fastapi import FastAPI
 
-from endpoints.router import api_router
+from solar_pred.endpoints.router import api_router
 from core.event_handlers import start_app_handler, stop_app_handler
 
 PORT = os.environ.get("ENDPOINT_PORT", 8010)

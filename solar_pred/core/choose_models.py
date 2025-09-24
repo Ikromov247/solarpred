@@ -1,8 +1,7 @@
 import os
 
 
-from solar_pred.core.ai_models.neural_network import load_nr_model
-from core.config import DEFAULT_MODEL_DIR
+from core.ai_models.neural_network import load_nr_model
 from core.logging_config import get_logger
 
 MODELS_AVAILABLE = ["neural_network"]
