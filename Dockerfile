@@ -23,8 +23,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY . /app
 
-RUN pip3 install -r /app/requirements.txt
 RUN pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1
+RUN pip3 install -r /app/requirements.txt
 
 # Set PYTHONPATH to include the app directory so solar_pred module can be found
 

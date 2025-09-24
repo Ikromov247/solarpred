@@ -9,7 +9,7 @@ import copy
 import pickle
 import pandas as pd
 
-from solar_pred.core.ai_models._models_general import train_val_split, normalize_train_val, output_boundaries
+from solar_pred.core.ai_models._models_general import train_val_split, normalize_train_val
 from solar_pred.core.exceptions import TrainSizeError, TestSizeError
 from solar_pred.core.logging_config import get_logger
 
@@ -191,7 +191,6 @@ class NeuralNetwork(nn.Module):
 
         if self.model_CONFIG['normalize']:
             predictions = self.scaler_y.inverse_transform(predictions.reshape(-1, 1))
-        # predictions = output_boundaries(predictions, self.model_CONFIG)
         predictions = predictions.reshape(-1).astype(np.float64)
         rounded_predictions = np.round(predictions, decimals=2)
 

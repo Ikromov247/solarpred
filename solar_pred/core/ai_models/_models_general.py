@@ -28,7 +28,3 @@ def normalize_train_val(train_set, val_set, scaler_X, scaler_y, model_CONFIG):
         y_val = scaler_y.transform(y_val.reshape(-1, 1)).flatten()
 
     return X_train, X_val, y_train, y_val
-
-def output_boundaries(predictions, model_CONFIG):
-    np.clip(predictions, model_CONFIG['output_boundaries']['lower'], model_CONFIG['output_boundaries']['upper'], out=predictions)
-    return predictions
