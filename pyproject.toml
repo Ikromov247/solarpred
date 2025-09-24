@@ -17,5 +17,8 @@ dependencies = [
     "requests-cache>=1.2.1",
     "retry-requests>=2.0.0",
     "scikit-learn>=1.7.2",
+    "torch>=2.8.0",
+    "torchaudio>=2.8.0",
+    "torchvision>=0.23.0",
     "uvicorn>=0.36.0",
 ]

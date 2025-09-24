@@ -1,5 +1,3 @@
-import traceback
-
 from fastapi import APIRouter, HTTPException, status
 from starlette.requests import Request
 

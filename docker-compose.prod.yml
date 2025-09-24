@@ -5,4 +5,11 @@
 services:
   solarpred:
     container_name: solarpred
-  
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

@@ -3,7 +3,7 @@ from typing import Union, Dict, List, Optional
 import datetime
 
 
-class PanelData(BaseModel):
+class PanelMetadata(BaseModel):
     inverter_id:str
     plant_id:str
     # solar panel coordinates. Used to fetch accurate weather
@@ -17,7 +17,7 @@ class PanelOutput(BaseModel):
     solar_power:float
 
 class TrainingInput(BaseModel):
-    panel_data: PanelData
+    panel_metadata: PanelMetadata
     panel_output: List[PanelOutput]
 
 class PredictionOutput(BaseModel):

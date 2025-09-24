@@ -7,7 +7,7 @@ from endpoints.router import api_router
 from core.event_handlers import start_app_handler, stop_app_handler
 
 PORT = os.environ.get("ENDPOINT_PORT", 8010)
-
+IS_DEV = int(os.environ.get("IS_DEV", 0)) # 0 or 1
 
 def get_api_app() -> FastAPI:
     api_app = FastAPI(title="ML API", version="1.0.0", debug=False)
@@ -24,4 +24,4 @@ app = get_api_app()
 if __name__=="__main__":
     """Initialize the endpoint"""
     print("Started the pipeline server")
-    uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=False)
+    uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=bool(IS_DEV))

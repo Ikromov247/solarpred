@@ -23,7 +23,8 @@ services:
       # HOWEVER you should know that managing secrets this way is not secure
       # since they will be stored in _plain text_ in container configuration file. 
       - COMMIT_ID=${COMMID_ID}
-      - ENDPOINT_PORT=8010
+      - PORT=${PORT}
+      - IS_DEV=0
     
     volumes:
       # if you save a file inside /app/data in the container,
@@ -33,22 +34,16 @@ services:
       - solar_data:/app/data
 
     expose:
-      - 8010
+      - ${PORT}
     ports:
       # Port Mapping format: outside_port:internal_port
-      - "9010:8010"
-      # This maps port 9010 on your host machine to port 8010 in the container. This matters for two key reasons:
-      # 1. Containers in the same network communicate using 
-      ## the internal port (8010), while external requests must use the host port (9010)
-      # 2. If port 9010 is already taken on your host machine, you can simply change it here
-      ##  without modifying your application code, which likely references the internal port (8010)
-    
-    networks:
-      - external_network
-      - local_network
+      - "${PORT}:${PORT}"
 
+    networks:
+      - local_network
+    
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:PORT/healthcheck"]
+      test: ["CMD-SHELL", "curl -f http://localhost:${PORT}/healthcheck"]
       interval: 10s
       timeout: 3m
       retries: 18
@@ -57,16 +52,9 @@ services:
 volumes:
   solar_data:
 
-
 networks:
-  # External network allows containers across different projects on the host machine to communicate
-  # Containers can reach each other using container names as hostnames
-  # Example: From container 'test_tollbal_test': curl http://another_container:internal_port/healthcheck
-  external_network_test:  # The name must be unique across the entire host machine
-    external: true
-  
   # Local network enables communication only between containers
   # within this specific compose project
   # Example: From container 'test_tollbal_test': curl http://extra:internal_port/healthcheck
-  local_network_test:
+  local_network:
     driver: bridge

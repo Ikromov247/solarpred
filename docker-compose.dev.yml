@@ -4,7 +4,8 @@
 services:
   solarpred:
     container_name: solarpred_local
-    
+    environment:
+      - IS_DEV=1
     volumes:
       # Mount your local project directory during development
       # This lets you modify code locally and see changes instantly in the container

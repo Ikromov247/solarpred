@@ -1,7 +1,6 @@
 from sklearn.preprocessing import StandardScaler
 
 
-
 MODELS_CONFIG = {
 
         "GENERAL_CONFIG": {
