@@ -26,10 +26,17 @@ MODELS_CONFIG = {
             "batch_size": 32,
             "learning_rate": 0.002,
             "dropout_rate": 0.1,
-            "device": "cuda",
+            "device": "cpu",
         }
 
 }
+
+def get_device():
+    import torch.cuda
+    if torch.cuda.is_available():
+        return "cuda"
+    else:
+        return "cpu"
 
 def get_model_config(model_name: str,  max_cap: float = 4.0, min_cap: float = 40.0):
     # Add general configurations to all model configurations
@@ -41,4 +48,5 @@ def get_model_config(model_name: str,  max_cap: float = 4.0, min_cap: float = 40
     models_config["output_boundaries"]["upper"] = max_cap
     models_config["output_boundaries"]["lower"] = min_cap
 
+    models_config['device'] = get_device()
     return models_config

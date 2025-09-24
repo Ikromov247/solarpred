@@ -5,6 +5,8 @@ WORKDIR /app
 
 # set timezone
 ENV TZ=Asia/Seoul
+ENV PYTHONPATH=/app
+
 RUN apt-get update && \
     apt-get install -y tzdata && \
     ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -21,7 +23,9 @@ RUN apt-get update && apt-get install -y \
 
 COPY . /app
 
-RUN pip3 install --no-cache-dir -r /app/requirements.txt
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+RUN pip3 install -r /app/requirements.txt
+RUN pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1
 
-ENTRYPOINT [ "python3", "solar_pred/main.py"]
+# Set PYTHONPATH to include the app directory so solar_pred module can be found
+
+ENTRYPOINT [ "python3", "-m", "solar_pred.main"]

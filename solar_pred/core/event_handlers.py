@@ -9,15 +9,16 @@ import logging
 
 from fastapi import FastAPI
 
-from core.config import DEFAULT_MODEL_DIR, VOLUME_PATH
-from core.choose_models import initialize_model
-from core.logging_config import setup_logger
+from solar_pred.core.config import DEFAULT_MODEL_DIR, VOLUME_PATH
+from solar_pred.core.choose_models import initialize_model
+from solar_pred.core.logging_config import setup_logger
 
 def _startup_model(app: FastAPI) -> None:
     # load model during startup.
     weights_dir = DEFAULT_MODEL_DIR
     model_instance = initialize_model(chosen_model="neural_network", weights_dir=weights_dir)
     app.state.model = model_instance
+    app.state.weights_dir = weights_dir
 
 
 def _initialize_logger():
@@ -29,6 +30,7 @@ def _initialize_logger():
 
 
 def _shutdown_model(app: FastAPI) -> None:
+    app.state.model.save_model(app.state.weights_dir)
     app.state.model = None
 
 

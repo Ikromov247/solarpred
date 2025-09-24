@@ -10,10 +10,10 @@ class PanelMetadata(BaseModel):
     latitude: float 
     longitude: float
     altitude: float
-    predict_days: Optional[int]
+    predict_days: Optional[int] = None
 
 class PanelOutput(BaseModel):
-    timestamp: Union[float, int] # yyyymmddhhmmss format, or %Y%m%d%H%M%S in strtime format
+    timestamp: Union[str, int] # yyyymmddhhmmss format, or %Y%m%d%H%M%S in strtime format
     solar_power:float
 
 class TrainingInput(BaseModel):
