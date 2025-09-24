@@ -20,7 +20,6 @@ async def predict(
     try:
         # load the model from app state
         model = request.app.state.model
-        print(model.is_trained)
         processor = DataProcessor()
 
         inference_data = processor.preprocess_inference_input(input_data)

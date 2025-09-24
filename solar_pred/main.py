@@ -19,5 +19,4 @@ app = get_api_app()
 
 if __name__=="__main__":
     """Initialize the endpoint"""
-    print("Started the pipeline server")
     uvicorn.run("solar_pred.main:app", host="0.0.0.0", port=config.port, reload=config.is_dev)
